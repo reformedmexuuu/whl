@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gra: Złap wieloryba</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    #game-area {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      margin: 20px auto;
+      border: 2px solid white;
+      background-color: #222;
+      overflow: hidden;
+    }
+
+    #whale {
+      position: absolute;
+      width: 60px;
+      display: none;
+      cursor: pointer;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+
+    #restart-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 100;
+    }
+
+    #restart-btn:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <button id="restart-btn">Restart</button>
+  <h1>Gra: Złap wieloryba harpunem</h1>
+  <p>Kliknij wieloryba, gdy się pojawi!</p>
+  <div id="game-area">
+    <img id="whale" src="ww.png" alt="Wieloryb" />
+  </div>
+  <div id="message"></div>
+
+  <script>
+    const whale = document.getElementById("whale");
+    const message = document.getElementById("message");
+    const gameArea = document.getElementById("game-area");
+    const restartBtn = document.getElementById("restart-btn");
+
+    let hideTimeout;
+    let gameTimeout;
+
+    // Zmiana obrazka po najechaniu
+    whale.addEventListener("mouseover", () => {
+      whale.src = "ww2.png";
+    });
+
+    whale.addEventListener("mouseout", () => {
+      whale.src = "ww.png";
+    });
+
+    function startGame() {
+      whale.style.display = "none";
+      message.textContent = "";
+
+      const appearTime = Math.random() * 5000;
+
+      gameTimeout = setTimeout(() => {
+        const areaWidth = gameArea.clientWidth;
+        const areaHeight = gameArea.clientHeight;
+
+        const x = Math.random() * (areaWidth - 60);
+        const y = Math.random() * (areaHeight - 60);
+
+        whale.style.left = `${x}px`;
+        whale.style.top = `${y}px`;
+        whale.src = "ww.png"; // reset obrazka
+        whale.style.display = "block";
+
+        hideTimeout = setTimeout(() => {
+          whale.style.display = "none";
+          message.textContent = "Nie udało się złapać!";
+        }, 500);
+
+        whale.onclick = () => {
+          clearTimeout(hideTimeout);
+          whale.style.display = "none";
+          message.textContent = "Złapałeś wieloryba! Brawo!";
+        };
+      }, appearTime);
+    }
+
+    restartBtn.onclick = () => {
+      clearTimeout(hideTimeout);
+      clearTimeout(gameTimeout);
+      startGame();
+    };
+
+    window.onload = startGame;
+  </script>
+</body>
+</html>
